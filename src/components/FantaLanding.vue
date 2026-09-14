@@ -49,7 +49,7 @@
         <button>Buy Now</button>
       </div>
       <div class="card">
-        <img class="lemon" src="/Assets/orange2.png" alt="Lemon" />
+        <!-- <img class="lemon" src="/Assets/orange2.png" alt="Lemon" /> -->
         <img id="fanta-card" src="/Assets/fanta.png" alt="Fanta Card" />
         <h1>Fanta</h1>
         <button>Buy Now</button>
@@ -75,7 +75,7 @@ let ctx
 
 onMounted(() => {
   ctx = gsap.context(() => {
-    // 1-bo'limdan 2-bo'limga o'tish
+    // 1-bo'limdan 2-bo'limga o'tish (o'zgarishsiz)
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: '.two',
@@ -101,6 +101,17 @@ onMounted(() => {
       },
     })
 
+    // --- YANGI QISM: fanta-card joyini aniq o'lchab olamiz ---
+    const oneEl = document.querySelector('.one')
+    const fantaTarget = document.querySelector('#fanta-card')
+    const oneRect = oneEl.getBoundingClientRect()
+    const targetRect = fantaTarget.getBoundingClientRect()
+
+    const targetLeft = ((targetRect.left - oneRect.left) / oneRect.width) * 100
+    const targetTop = ((targetRect.top - oneRect.top) / oneRect.height) * 100
+    const targetWidth = (targetRect.width / oneRect.width) * 100
+    // --- YANGI QISM tugadi ---
+
     tl2
       .from(
         '.lemon1',
@@ -114,18 +125,18 @@ onMounted(() => {
       .to(
         '.fanta',
         {
-          top: '210%',
-          left: '35%',
-          width: '35%',
+          top: `${targetTop}%`,
+          left: `34%`,
+          width: `33%`,
         },
         'ca',
       )
       .to(
         '.orange2',
         {
-          top: '208%',
-          left: '42%',
-          width: '18%',
+          top: `${targetTop - 21}%`, // kerak bo'lsa orange2 uchun sal moslang
+          left: `${targetLeft - 6.5}%`,
+          width: '28%',
         },
         'ca',
       )
@@ -324,7 +335,9 @@ nav i {
 
 .card h1 {
   font-size: 3vw;
-  margin-top: 18vw;
+  margin-top: 24vw;
+  position: relative; /* ← qo'shildi */
+  z-index: 2;
 }
 
 .card button {
@@ -335,10 +348,12 @@ nav i {
   border: none;
   padding: 1vw 2vw;
   cursor: pointer;
+  position: relative; /* ← qo'shildi */
+  z-index: 2;
 }
 
 #cocacola {
-  top: 14%;
+  top: 0%;
   position: absolute;
   width: 13vw;
 }
@@ -346,19 +361,21 @@ nav i {
 #pepsi {
   position: absolute;
   width: 20vw;
-  top: 12%;
+  top: -5%;
 }
 
 .lemon {
-  width: 20vw;
+  width: 28vw;
   position: absolute;
-  top: 0%;
+  top: -30%;
+  z-index: 0;
 }
 
 #fanta-card {
   position: absolute;
-  width: 30vw;
-  top: 16%;
-  opacity: 0;
+  width: 15vw; /* cocacola (13vw) ga yaqin — banka shakliga moslang */
+  top: 0%; /* cocacola bilan bir xil balandlik */
+  opacity: 0; /* shisha bu joyda ko'rinmaydi, o'rniga .fanta uchib keladi */
+  z-index: 0;
 }
 </style>
