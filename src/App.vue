@@ -1,8 +1,7 @@
 <template>
-  <ProductViewer />
+  <RouterView />
 </template>
 
 <script setup>
-import FantaLanding from './components/FantaLanding.vue'
-import ProductViewer from './components/ProductViewer.vue'
+import { RouterView } from 'vue-router'
 </script>

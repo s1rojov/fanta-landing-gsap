@@ -45,6 +45,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -61,6 +62,7 @@ const loadingProgress = ref(0)
 let scene, camera, renderer, animFrameId
 let productModel = null
 let pmremGenerator = null
+let dracoLoader = null
 
 onMounted(() => {
   // 1. Scene yaratish
@@ -83,10 +85,14 @@ onMounted(() => {
   pmremGenerator = new THREE.PMREMGenerator(renderer)
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture
 
-  // 5. 3D Modelni CDN orqali yuklash
+  // 5. 3D Modelni yuklash (Draco siqilgan .glb fayllar uchun DRACOLoader kerak)
+  dracoLoader = new DRACOLoader()
+  dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/')
+
   const loader = new GLTFLoader()
-  const MODEL_URL =
-    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb'
+  loader.setDRACOLoader(dracoLoader)
+
+  const MODEL_URL = '/models/ferrari.glb'
 
   loader.load(
     MODEL_URL,
@@ -94,7 +100,7 @@ onMounted(() => {
       productModel = gltf.scene
 
       // Model o'lchami va boshlang'ich pozitsiyasi
-      productModel.scale.set(1.5, 1.5, 1.5)
+      productModel.scale.set(0.5, 0.5, 0.5)
       productModel.rotation.y = Math.PI / 2
 
       scene.add(productModel)
@@ -201,6 +207,7 @@ onUnmounted(() => {
   cancelAnimationFrame(animFrameId)
   ScrollTrigger.getAll().forEach((t) => t.kill())
   if (pmremGenerator) pmremGenerator.dispose()
+  if (dracoLoader) dracoLoader.dispose()
   if (renderer) renderer.dispose()
 })
 </script>
